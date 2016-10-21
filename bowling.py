@@ -1,6 +1,6 @@
 import json
 import requests
-import os
+from os import path, environ
 from mailer import Mailer
 from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
@@ -14,8 +14,8 @@ class Bowling(object):
             print("Could not find .env, rename .env.example and set values")
             exit()
 
-        self.url = os.environ.get("URL")
-        self.save_dir = os.environ.get("SAVE_DIR")
+        self.url = environ.get("URL")
+        self.save_dir = environ.get("SAVE_DIR")
         self.results_changed = True
         self.results = dict()
         self.get_results()
@@ -24,7 +24,7 @@ class Bowling(object):
             self.send_results_email()
 
     def load(self):
-        if not os.path.isfile(self.save_dir):
+        if not path.isfile(self.save_dir):
             return None
 
         with open(self.save_dir) as data_file:

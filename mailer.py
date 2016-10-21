@@ -1,17 +1,17 @@
 import smtplib
-import datetime
-import os
+from datetime import datetime
+from os import environ
 
 
 class Mailer(object):
     def __init__(self, body):
-        self.fromAddress = os.environ.get("MAIL_EMAIL")
-        self.toAddress = os.environ.get("MAIL_TO")
-        self.password = os.environ.get("MAIL_PASSWORD")
+        self.fromAddress = environ.get("MAIL_EMAIL")
+        self.toAddress = environ.get("MAIL_TO")
+        self.password = environ.get("MAIL_PASSWORD")
         self.send_mail(body)
 
     def send_mail(self, body):
-        subject = 'Bowling Score update - ' + datetime.datetime.now().strftime('%d-%m-%Y')
+        subject = 'Bowling Score update - ' + datetime.now().strftime('%d-%m-%Y')
 
         header = 'From: %s\n' % self.fromAddress
         header += 'To: %s\n' % ','.join(self.toAddress)
