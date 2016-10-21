@@ -1,14 +1,27 @@
 import json
 import requests
 import os
+from mailer import Mailer
+from datetime import datetime
+from dotenv import load_dotenv, find_dotenv
 
 
 class Bowling(object):
     def __init__(self):
-        self.url = 'http://results.amfbowling.com.au/league-bowling.php?centre=44&results=6/bowlers.htm#plyr47'
-        self.save_dir = 'results.json'
+        try:
+            load_dotenv(find_dotenv())
+        except Exception:
+            print("Could not find .env, rename .env.example and set values")
+            exit()
+
+        self.url = os.environ.get("URL")
+        self.save_dir = os.environ.get("SAVE_DIR")
+        self.results_changed = True
         self.results = dict()
         self.get_results()
+
+        if self.results_changed:
+            self.send_results_email()
 
     def load(self):
         if not os.path.isfile(self.save_dir):
@@ -33,7 +46,7 @@ class Bowling(object):
     def diff_results(self, old_results, new_results):
         return new_results
         results = self.merge_dicts(old_results, new_results)
-
+        self.results_changed = True
         return list({v[0]:v for v in results}.values())
 
     def merge_dicts(self, *dict_args):
@@ -109,7 +122,8 @@ class Bowling(object):
             count += 3
 
         average = (total / count)
-        return "Average score of {} with a total of {} games".format(average, count)
+        return "Average score of {} with a total of {} games. \n" \
+               "Total pin count is {}.".format(average, count, total)
 
     def high_game(self):
         highest = 0
@@ -121,7 +135,7 @@ class Bowling(object):
                     highest = int(game)
                     week = scores[0]
 
-        return "Highest game on {} with a score of {}".format(week, highest)
+        return "Highest game on {} with a score of {}.".format(week, highest)
 
     def high_series(self):
         highest = 0
@@ -133,11 +147,37 @@ class Bowling(object):
                 highest = int(total)
                 week = scores[0]
 
-        return "Highest series on {} with a score of {}".format(week, highest)
+        return "Highest series on {} with a total of {}.".format(week, highest)
+
+    def latest_game(self):
+        date = datetime.strptime('01/01/1990', "%d/%m/%Y").date()
+
+        for week in self.results.items():
+            week_date = datetime.strptime(week[0], "%d/%m/%Y").date()
+
+            if week_date > date:
+                date = week_date
+
+        key = date.strftime('%d/%m/%Y')
+        results = self.results[key]
+        total = int(results[0]) + int(results[1]) + int(results[2])
+
+        return "Latest game on {}, with scores of {}, {}, {}. Series total of {}".format(key, results[0], results[1], results[2], total)
+
+    def send_results_email(self):
+        body = ''
+        methods = {
+            'latest_game',
+            'average',
+            'high_game',
+            'high_series'
+        }
+
+        for method in methods:
+            body += getattr(self, method)() + "\n\n"
+
+        Mailer(body)
+
 
 if __name__ == '__main__':
     bowling = Bowling()
-
-    print(bowling.average())
-    print(bowling.high_game())
-    print(bowling.high_series())
