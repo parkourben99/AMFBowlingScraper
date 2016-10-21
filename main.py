@@ -109,9 +109,35 @@ class Bowling(object):
             count += 3
 
         average = (total / count)
-        print(average)
+        return "Average score of {} with a total of {} games".format(average, count)
 
+    def high_game(self):
+        highest = 0
+        week = ''
+
+        for scores in self.results.items():
+            for game in scores[1]:
+                if int(game) > highest:
+                    highest = int(game)
+                    week = scores[0]
+
+        return "Highest game on {} with a score of {}".format(week, highest)
+
+    def high_series(self):
+        highest = 0
+        week = ''
+
+        for scores in self.results.items():
+            total = (int(scores[1][0]) + int(scores[1][1]) + int(scores[1][2]))
+            if int(total) > highest:
+                highest = int(total)
+                week = scores[0]
+
+        return "Highest series on {} with a score of {}".format(week, highest)
 
 if __name__ == '__main__':
     bowling = Bowling()
-    bowling.average()
+
+    print(bowling.average())
+    print(bowling.high_game())
+    print(bowling.high_series())
