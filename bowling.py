@@ -16,7 +16,7 @@ class Bowling(object):
 
         self.url = environ.get("URL")
         self.save_dir = environ.get("SAVE_DIR")
-        self.results_changed = True
+        self.results_changed = False
         self.results = dict()
         self.get_results()
 
@@ -25,6 +25,7 @@ class Bowling(object):
 
     def load(self):
         if not path.isfile(self.save_dir):
+            self.results_changed = True
             return None
 
         with open(self.save_dir) as data_file:
@@ -44,21 +45,14 @@ class Bowling(object):
             out.write(json.dumps(results))
 
     def diff_results(self, old_results, new_results):
-        return new_results
-        results = self.merge_dicts(old_results, new_results)
-        self.results_changed = True
-        return list({v[0]:v for v in results}.values())
+        results = old_results
 
-    def merge_dicts(self, *dict_args):
-        """
-        Given any number of dicts, shallow copy and merge into a new dict,
-        precedence goes to key value pairs in latter dicts.
-        http://stackoverflow.com/questions/38987/how-to-merge-two-python-dictionaries-in-a-single-expression
-        """
-        result = {}
-        for dictionary in dict_args:
-            result.update(dictionary)
-        return result
+        for result in new_results.items():
+            if not result[0] in results:
+                self.results_changed = True
+                results[result[0]] = result[1]
+
+        return results
 
     def get_results(self):
         raw_data = self.get_raw_data()
@@ -177,6 +171,7 @@ class Bowling(object):
             body += getattr(self, method)() + "\n\n"
 
         Mailer(body)
+        print("Email sent")
 
 
 if __name__ == '__main__':
