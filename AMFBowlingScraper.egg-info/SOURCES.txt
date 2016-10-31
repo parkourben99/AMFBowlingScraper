@@ -1,7 +1,0 @@
-setup.py
-AMFBowlingScraper.egg-info/PKG-INFO
-AMFBowlingScraper.egg-info/SOURCES.txt
-AMFBowlingScraper.egg-info/dependency_links.txt
-AMFBowlingScraper.egg-info/not-zip-safe
-AMFBowlingScraper.egg-info/requires.txt
-AMFBowlingScraper.egg-info/top_level.txt
