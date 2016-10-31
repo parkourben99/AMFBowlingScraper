@@ -115,7 +115,7 @@ class Bowling(object):
             total += (int(scores[1][0]) + int(scores[1][1]) + int(scores[1][2]))
             count += 3
 
-        average = (total / count)
+        average = int((total / count))
         return "Average score of {} with a total of {} games. \n" \
                "Total pin count is {}.".format(average, count, total)
 
@@ -171,7 +171,6 @@ class Bowling(object):
             body += getattr(self, method)() + "\n\n"
 
         Mailer(body)
-        print("Email sent")
 
 
 if __name__ == '__main__':
