@@ -169,7 +169,7 @@ class Bowling(object):
         for method in methods:
             body += getattr(self, method)() + "\n\n"
 
-        if environ.get("MAIL_SEND", False) != 'False':
+        if environ.get("MAIL_SEND", False) != 'False' and self.results_changed:
             Mailer(body)
         else:
             print(body)
