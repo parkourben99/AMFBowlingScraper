@@ -20,8 +20,7 @@ class Bowling(object):
         self.results = dict()
         self.get_results()
 
-        if self.results_changed:
-            self.send_results_email()
+        self.send_results_email()
 
     def load(self):
         if not path.isfile(self.save_dir):
