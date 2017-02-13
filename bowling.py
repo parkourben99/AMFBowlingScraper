@@ -67,7 +67,18 @@ class Bowling(object):
         for row in raw:
             row_array = row.split('<td>')
 
-            date = row_array[2][:-5]
+            raw_date = row_array[2][:-5]
+            split_date = raw_date.split('/')
+            day = split_date[0]
+            month = split_date[1]
+            year = split_date[2]
+
+            if int(day) < 10:
+                day = "0{}".format(day)
+
+
+            date = "{day}/{month}/{year}".format(day=day, month=month, year=year)
+
             game1 = row_array[4][:-5].replace('*', '')
             game2 = row_array[5][:-5].replace('*', '')
             game3 = row_array[6][:-5].replace('*', '')
