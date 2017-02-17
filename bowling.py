@@ -153,6 +153,34 @@ class Bowling(object):
 
         return "Highest series on {} with a total of {}.".format(week, highest)
 
+    def low_game(self):
+        lowest = 301
+        week = ''
+
+        for scores in self.results.items():
+            for game in scores[1]:
+                if int(game) < lowest:
+                    lowest = int(game)
+                    week = scores[0]
+
+        return "Lowest game on {} with a score of {}.".format(week, lowest)
+
+    def running_average(self):
+        weeks = 3
+        total = 0
+        count = 0
+
+        ordered = sorted(self.results.items(), key=lambda t: datetime.strptime(t[0], "%d/%m/%Y").date())
+
+        pre_weeks = ordered[-weeks:]
+
+        for scores in pre_weeks:
+            total += (int(scores[1][0]) + int(scores[1][1]) + int(scores[1][2]))
+            count += 3
+
+        average = int((total / count))
+        return "{} Week running Average of {}. ".format(weeks, average)
+
     def latest_game(self):
         date = datetime.strptime('01/01/1990', "%d/%m/%Y").date()
 
@@ -165,17 +193,22 @@ class Bowling(object):
         key = date.strftime('%d/%m/%Y')
         results = self.results[key]
         total = int(results[0]) + int(results[1]) + int(results[2])
+        average = int((total / 3))
 
-        return "Latest game on {}, with scores of {}, {}, {}. Series total of {}".format(key, results[0], results[1], results[2], total)
+        return "Latest game on {}, with scores of {}, {}, {}. \n" \
+               "Series total of {}. This week average of {}.".format(key, results[0], results[1], results[2], total, average)
 
     def send_results_email(self):
-        body = ''
         methods = {
             'latest_game',
             'average',
             'high_game',
-            'high_series'
+            'low_game',
+            'high_series',
+            'running_average'
         }
+        
+        body = ''
 
         for method in methods:
             body += getattr(self, method)() + "\n\n"
