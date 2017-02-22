@@ -181,6 +181,26 @@ class Bowling(object):
         average = int((total / count))
         return "{} Week running Average of {}. ".format(weeks, average)
 
+    def games_over_amount(self, above):
+        total = 0
+
+        for scores in self.results.items():
+            for game in scores[1]:
+                if int(game) >= above:
+                    total += 1
+
+        return "Total of {total} game over {above}.".format(total=total, above=above)
+
+    def series_over_amount(self, above):
+        total = 0
+
+        for scores in self.results.items():
+            series = (int(scores[1][0]) + int(scores[1][1]) + int(scores[1][2]))
+            if series >= above:
+                total += 1
+
+        return "{total} series over {above}.".format(total=total, above=above)
+
     def latest_game(self):
         date = datetime.strptime('01/01/1990', "%d/%m/%Y").date()
 
@@ -205,13 +225,23 @@ class Bowling(object):
             'high_game',
             'low_game',
             'high_series',
-            'running_average'
+            'running_average',
+            'series_over_amount:500',
+            'series_over_amount:600',
+            'series_over_amount:700',
+            'games_over_amount:200',
+            'games_over_amount:250',
         }
-        
+
         body = ''
 
         for method in methods:
-            body += getattr(self, method)() + "\n\n"
+            parts = method.split(':')
+
+            if len(parts) > 1:
+                body += getattr(self, parts[0])(int(parts[1])) + "\n\n"
+            else:
+                body += getattr(self, parts[0])() + "\n\n"
 
         if environ.get("MAIL_SEND", False) != 'False' and self.results_changed:
             Mailer(body)
