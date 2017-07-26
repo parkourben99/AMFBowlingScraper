@@ -4,6 +4,7 @@ from os import path, environ
 from mailer import Mailer
 from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
+from notifaction import Notification
 
 
 class Bowling(object):
@@ -247,6 +248,9 @@ class Bowling(object):
             Mailer(body)
         else:
             print(body)
+
+        if environ.get("SEND_NOTIFICATION", False):
+            Notification(body, "Bowling Update", environ.get("NOTIFICATION_API"), environ.get("NOTIFICATION_USER"))
 
 
 if __name__ == '__main__':
