@@ -246,12 +246,12 @@ class Bowling(object):
 
         if environ.get("MAIL_SEND", False) != 'False' and self.results_changed:
             Mailer(body)
+
+            if environ.get("SEND_NOTIFICATION", False):
+                Notification(body, "Bowling Update", environ.get("NOTIFICATION_API"), environ.get("NOTIFICATION_USER"))
         else:
             print(body)
-
-        if environ.get("SEND_NOTIFICATION", False):
-            Notification(body, "Bowling Update", environ.get("NOTIFICATION_API"), environ.get("NOTIFICATION_USER"))
-
+            
 
 if __name__ == '__main__':
     bowling = Bowling()
