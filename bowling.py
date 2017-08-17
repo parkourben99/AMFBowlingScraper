@@ -77,7 +77,6 @@ class Bowling(object):
             if int(day) < 10:
                 day = "0{}".format(day)
 
-
             date = "{day}/{month}/{year}".format(day=day, month=month, year=year)
 
             game1 = row_array[4][:-5].replace('*', '')
@@ -96,7 +95,7 @@ class Bowling(object):
         player = self.url[len(self.url) - 7:]
         player = player.replace('#', '')
 
-        top_section = content.find('name={}'.format(player))
+        top_section = content.find('name="{}"'.format(player))
         if top_section == -1: exit()
 
         content = content[top_section:]
