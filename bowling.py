@@ -95,8 +95,12 @@ class Bowling(object):
         player = self.url[len(self.url) - 7:]
         player = player.replace('#', '')
 
-        top_section = content.find('name="{}"'.format(player))
-        if top_section == -1: exit()
+        # top_section = content.find('name="{}"'.format(player))
+        top_section = content.find(player)
+
+        if top_section == -1:
+            print("unable to find player")
+            exit()
 
         content = content[top_section:]
 
@@ -113,9 +117,7 @@ class Bowling(object):
         tbody_end = content.find('</tbody>')
         if tbody_end == -1: exit()
 
-        content = content[:tbody_end]
-
-        return content
+        return content[:tbody_end]
 
     def average(self):
         total = 0
